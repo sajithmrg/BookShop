@@ -91,6 +91,8 @@ exports.loginUser = async (req, res) => {
         message: "not valied user",
       });
     }
+    //create token
+    const token = utils.generateAuthToken(user);
     const validPassword = await bcrypt.compare(
       req.body.password,
       user.password
@@ -107,6 +109,9 @@ exports.loginUser = async (req, res) => {
         code: 200,
         success: true,
         status: "OK",
+        token: token.token,
+        expireIn: token.expires,
+        data: token.sub,
         message: "user found",
       });
     }

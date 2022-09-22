@@ -1,3 +1,4 @@
+const { number } = require("@hapi/joi");
 const joi = require("@hapi/joi");
 exports.userRegistrationValidation = (data) => {
   const schema = joi.object({
@@ -21,4 +22,15 @@ exports.storeCreateValidation = (data) => {
     qty: joi.number().required().label("qty"),
   });
   return schema.validate(data);
+};
+exports.orderCreateValidation = (data) =>{
+    const schema = joi.object({
+        userId:joi.string().required().label("userId"),
+        bookType: joi.string().required().label("bookType"),
+        qty: joi.number().required().label("qty"),
+        totalAmount:joi.number().required().label("totalAmount"),
+       
+
+    });
+    return schema.validate(data);
 };
