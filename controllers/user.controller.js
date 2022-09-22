@@ -2,6 +2,7 @@ const UserModel = require("../models/user.models");
 const { userRegistrationValidation } = require("../validation");
 const { loginValidation } = require("../validation");
 const bcrypt = require("bcrypt");
+const utils = require("../libs/utils");
 
 exports.createUser = async (req, res) => {
   try {
@@ -34,12 +35,16 @@ exports.createUser = async (req, res) => {
       password: req.body.password,
     });
     const user = await newUser.save();
+    //token create
+    const token = utils.generateAuthToken(user);
     if (user) {
       return res.status(200).json({
         code: 200,
         success: true,
         status: "OK",
-        data: user,
+        token:token.token,
+        expireIn: token.expires,
+        data: token.sub,
         message: "cerate user successfuly",
       });
     } else {

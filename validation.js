@@ -15,3 +15,9 @@ exports.loginValidation = (data) =>{
     });
      return schema.validate(data);
 }
+exports.storeCreateValidation = (data) =>{
+    const schema = joi.object({
+        bookType:joi.string().required().label("booktype"),
+        qty:joi.number().required().label("qty")
+    })
+}
