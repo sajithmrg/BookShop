@@ -23,14 +23,22 @@ exports.storeCreateValidation = (data) => {
   });
   return schema.validate(data);
 };
-exports.orderCreateValidation = (data) =>{
-    const schema = joi.object({
-        userId:joi.string().required().label("userId"),
-        bookType: joi.string().required().label("bookType"),
-        qty: joi.number().required().label("qty"),
-        totalAmount:joi.number().required().label("totalAmount"),
-       
-
-    });
-    return schema.validate(data);
+exports.orderCreateValidation = (data) => {
+  const schema = joi.object({
+    userId: joi.string().required().label("userId"),
+    bookType: joi.string().required().label("bookType"),
+    qty: joi.number().required().label("qty"),
+    totalAmount: joi.number().required().label("totalAmount"),
+  });
+  return schema.validate(data);
+};
+exports.empValidation = (data) => {
+  const schema = joi.object({
+    employeeFname: joi.string().required().label("employeeFname").min(4),
+    employeeLname: joi.string().required().label("employeeLname").min(4),
+    employeeType: joi.string().required().label("employeeType"),
+    email: joi.string().required().label("email"),
+    password: joi.string().required().label("password").min(4),
+  });
+  return schema.validate(data);
 };
