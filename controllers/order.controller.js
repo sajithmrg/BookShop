@@ -168,3 +168,35 @@ exports.findOrder = async (req, res) => {
     });
   }
 };
+exports.findSameUserIdOrder = async (req,res) =>{
+  try {
+    var userId =req.body.userId
+    orderModel.find({
+      userId:userId
+    }).then((data)=>{
+      if(data){
+        return res.status(200).json({
+          code: 200,
+          success: true,
+          status: "OK",
+          message: "record find",
+          data: data,
+        });
+      }else{
+        return res.status(200).json({
+          code: 200,
+          success: false,
+          status: "bad request",
+          message: "Invalied user id",
+        });
+      }
+    })
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      success: false,
+      status: "Internal server error",
+      message: error.message,
+    });
+  }
+}
