@@ -1,5 +1,6 @@
 const orderModel = require("../models/order.models");
 const { orderCreateValidation } = require("../validation");
+const storeModel = require("../models/store.models");
 
 exports.createOrder = async (req, res) => {
   try {
@@ -21,7 +22,25 @@ exports.createOrder = async (req, res) => {
       totalAmount: req.body.totalAmount,
     });
     const order = await newOrder.save();
-    if (order) {
+
+    const bType = req.body.bookType;
+    const storeData = await storeModel.find({
+      bookType: bType,
+    });
+
+    const sData = storeData[0].qty;
+    const bData = req.body.qty;
+
+    const newData = sData - bData;
+    
+    const storeData2 = await storeModel.findOneAndUpdate(
+      {
+        bookType: bType,
+      },
+      { $set: { qty: newData } }
+    );
+      console.log(storeData2)
+    if (order && storeData2) {
       return res.status(200).json({
         code: 200,
         success: true,
@@ -30,8 +49,8 @@ exports.createOrder = async (req, res) => {
         message: "order create successfuly",
       });
     } else {
-      return res.status(200).json({
-        code: 200,
+      return res.status(400).json({
+        code: 400,
         success: false,
         status: "Bad request",
         message: "Not success",
@@ -58,8 +77,8 @@ exports.allOrders = async (req, res) => {
         message: "Find all orders",
       });
     } else {
-      return res.status(200).json({
-        code: 200,
+      return res.status(400).json({
+        code: 400,
         success: false,
         status: "Bad request",
         message: "Not success",
@@ -95,8 +114,8 @@ exports.updateOrder = async (req, res) => {
         data: order,
       });
     } else {
-      return res.status(200).json({
-        code: 200,
+      return res.status(400).json({
+        code: 400,
         success: false,
         status: "bad request",
         message: "Invalied order id",
@@ -123,8 +142,8 @@ exports.deleteOrder = async (req, res) => {
         message: ` ${id} order deleted`,
       });
     } else {
-      return res.status(200).json({
-        code: 200,
+      return res.status(400).json({
+        code: 400,
         success: false,
         status: "bad request",
         message: "Invalied order id",
@@ -152,8 +171,8 @@ exports.findOrder = async (req, res) => {
         data: forder,
       });
     } else {
-      return res.status(200).json({
-        code: 200,
+      return res.status(400).json({
+        code: 400,
         success: false,
         status: "bad request",
         message: "Invalied order id",
@@ -168,29 +187,31 @@ exports.findOrder = async (req, res) => {
     });
   }
 };
-exports.findSameUserIdOrder = async (req,res) =>{
+exports.findSameUserIdOrder = async (req, res) => {
   try {
-    var userId =req.body.userId
-    orderModel.find({
-      userId:userId
-    }).then((data)=>{
-      if(data){
-        return res.status(200).json({
-          code: 200,
-          success: true,
-          status: "OK",
-          message: "record find",
-          data: data,
-        });
-      }else{
-        return res.status(200).json({
-          code: 200,
-          success: false,
-          status: "bad request",
-          message: "Invalied user id",
-        });
-      }
-    })
+    var userId = req.body.userId;
+    orderModel
+      .find({
+        userId: userId,
+      })
+      .then((data) => {
+        if (data) {
+          return res.status(200).json({
+            code: 200,
+            success: true,
+            status: "OK",
+            message: "record find",
+            data: data,
+          });
+        } else {
+          return res.status(400).json({
+            code: 400,
+            success: false,
+            status: "bad request",
+            message: "Invalied user id",
+          });
+        }
+      });
   } catch (error) {
     return res.status(500).json({
       code: 500,
@@ -199,4 +220,4 @@ exports.findSameUserIdOrder = async (req,res) =>{
       message: error.message,
     });
   }
-}
+};
